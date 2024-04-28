@@ -1,27 +1,41 @@
 import tkinter as tk
-# from windows.login_window import run_login_window
+from tkinter import messagebox
+import requests
 
 def signup():
-    username = username_entry.get()
-    email = email_entry.get()
-    password = password_entry.get()
+    username = username_entry.get().strip()  # Remove leading and trailing whitespaces
+    email = email_entry.get().strip()
+    password = password_entry.get().strip()
 
-    print("Signup Details:")
-    print("Username:", username)
-    print("Email:", email)
-    print("Password:", password)
+    if not username or not email or not password:
+        messagebox.showerror("Error", "Please fill in all fields.")
+        return
 
+    # Prepare the data to send to the server
+    data = {
+        "username": username,
+        "email": email,
+        "password": password
+    }
 
+    # Send a POST request to the Flask server
+    response = requests.post("http://localhost:5000/signup", json=data)
 
+    # Check the response status code
+    if response.status_code == 201:
+        messagebox.showinfo("Signup Successful", "Signup successful!")
+        root.destroy()  # Close the signup window
+        from windows import login_window
+        login_window.run_login_window()  # Open the login window
+    elif response.status_code == 400:
+        error_message = response.json().get("error", "Unknown error occurred.")
+        messagebox.showerror("Signup Error", error_message)
+    else:
+        messagebox.showerror("Unknown Error", "Unknown error occurred.")
 
 def show_signup_window():
-    def goto_signin():
-        # pass
-        root.destroy()
-        from windows import login_window
-        login_window.run_login_window()
-
     # Create the main window
+    global root
     root = tk.Tk()
     root.title("Signup")
     root.geometry("300x200")
@@ -50,7 +64,7 @@ def show_signup_window():
     signup_button = tk.Button(root, text="Signup", command=signup)
     signup_button.pack()
 
-    signup_button = tk.Button(root, text="Have an account? Sign in", command=goto_signin)
+    signup_button = tk.Button(root, text="Have an account? Sign in", command=root.destroy)
     signup_button.pack(pady=5)
 
     root.mainloop()

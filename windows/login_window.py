@@ -2,19 +2,35 @@ import tkinter as tk
 from tkinter import messagebox
 from windows import main_window
 from windows import signup_window
+import requests
 
 login_window = None  # Define login_window globally
 
+
+login_window = None  # Define login_window globally
 
 def login():
     username = username_entry.get()
     password = password_entry.get()
 
-    if username == "admin" and password == "admin":
+    # Prepare the data to send to the server
+    data = {
+        "email": username,
+        "password": password
+    }
+
+    # Send a POST request to the Flask server
+    response = requests.post("http://localhost:5000/login", json=data)
+
+    # Check the response status code
+    if response.status_code == 200:
+        messagebox.showinfo("Login Successful", "Login successful!")
         login_window.destroy()
         main_window.show_main_window()
+    elif response.status_code == 401:
+        messagebox.showerror("Login Failed", "Invalid email or password")
     else:
-        messagebox.showerror("Login Failed", "Invalid username or password")
+        messagebox.showerror("Login Failed", "Unknown error occurred")
 
 
 def goto_signup():
