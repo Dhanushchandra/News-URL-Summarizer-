@@ -5,6 +5,7 @@ from newspaper import Article
 from PIL import Image, ImageTk
 import requests
 from io import BytesIO
+from helpers.text_to_speak import text_to_speak
 
 def analyze_url():
     url = url_entry.get()
@@ -38,8 +39,18 @@ def analyze_url():
         # Update summary and sentiment labels
         summary_label.config(text="Summary:\n" + summary, fg="black", font=("Helvetica", 10, "italic"))
         sentiment_label.config(text="Sentiment Score: " + sentiment + " (" + str(sentiment_score) + ") ", fg=get_sentiment_color(sentiment_score), font=("Helvetica", 10, "bold"))
+
+        return summary
     except Exception as e:
         messagebox.showerror("Error", "An error occurred:\n" + str(e))
+
+def speak_summary():
+    # Call analyze_url to get the summary
+    summary = analyze_url()
+
+    if summary:
+        # Call text_to_speak function with the summary as argument
+        text_to_speak(summary)
 
 def get_sentiment(score):
     if score < -0.5:
@@ -65,11 +76,23 @@ def get_sentiment_color(score):
     else:
         return "darkgreen"
 
+def exit_full_screen(event):
+    root.attributes("-fullscreen", False)
+
 def show_main_window():
     # Create the main window
+
+    global root
+
     root = tk.Tk()
     root.title("URL Analyzer")
-    root.geometry("500x500")
+    # root.geometry("800x800")
+
+    root.attributes("-fullscreen", True)
+
+    root.bind("<Escape>", exit_full_screen)
+
+
 
     global url_entry, title_label, publish_date_label, authors_label, keywords_label, image_label, summary_label, sentiment_label
 
@@ -82,6 +105,10 @@ def show_main_window():
     # Analyze button
     analyze_button = tk.Button(root, text="Analyze URL", command=analyze_url, bg="lightblue", font=("Helvetica", 12, "bold"))
     analyze_button.pack(pady=5)
+
+    speak_button = tk.Button(root, text="Speak Summary", command=speak_summary, bg="lightgreen",
+                             font=("Helvetica", 12, "bold"))
+    speak_button.pack(pady=5)
 
     # Labels to display article data
     title_label = tk.Label(root, font=("Helvetica", 10))

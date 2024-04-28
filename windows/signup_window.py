@@ -33,39 +33,55 @@ def signup():
     else:
         messagebox.showerror("Unknown Error", "Unknown error occurred.")
 
+def changetologin():
+    root.destroy()
+    from windows import login_window
+    login_window.run_login_window()
+
+def exit_full_screen(event):
+    root.attributes("-fullscreen", False)
+
+
 def show_signup_window():
     # Create the main window
     global root
     root = tk.Tk()
     root.title("Signup")
-    root.geometry("300x200")
+    # root.geometry("300x200")
+
+    root.attributes("-fullscreen", True)
+
+    root.bind("<Escape>", exit_full_screen)
+
 
     global username_entry, email_entry, password_entry
 
     # Username entry
     username_label = tk.Label(root, text="Username:")
-    username_label.pack()
+    username_label.place(relx=0.5, rely=0.3, anchor="center")
     username_entry = tk.Entry(root)
-    username_entry.pack()
+    username_entry.place(relx=0.5, rely=0.35, anchor="center")
 
     # Email entry
     email_label = tk.Label(root, text="Email:")
-    email_label.pack()
+    email_label.place(relx=0.5, rely=0.4, anchor="center")
     email_entry = tk.Entry(root)
-    email_entry.pack()
+    email_entry.place(relx=0.5, rely=0.45, anchor="center")
 
     # Password entry
     password_label = tk.Label(root, text="Password:")
-    password_label.pack()
+    password_label.place(relx=0.5, rely=0.5, anchor="center")
     password_entry = tk.Entry(root, show="*")
-    password_entry.pack()
+    password_entry.place(relx=0.5, rely=0.55, anchor="center")
 
     # Signup button
     signup_button = tk.Button(root, text="Signup", command=signup)
-    signup_button.pack()
+    signup_button.place(relx=0.5, rely=0.6, anchor="center")
 
-    signup_button = tk.Button(root, text="Have an account? Sign in", command=root.destroy)
-    signup_button.pack(pady=5)
+    # Have an account? Sign in button
+    signin_button = tk.Button(root, text="Have an account? Sign in", command=changetologin)
+    signin_button.place(relx=0.5, rely=0.65, anchor="center")
+
 
     root.mainloop()
 
