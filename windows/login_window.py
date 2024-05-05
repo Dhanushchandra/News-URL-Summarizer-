@@ -6,8 +6,6 @@ import requests
 
 login_window = None  # Define login_window globally
 
-login_window = None  # Define login_window globally
-
 
 def login():
     username = username_entry.get()
